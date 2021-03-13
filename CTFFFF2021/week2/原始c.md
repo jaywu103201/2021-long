@@ -75,7 +75,89 @@ main:
 
 ```
 
-##
+## 產生intel 語法的組合語言
 ```
+ gcc -S -masm=intel 1.c -o func1_intel.s
+ 
+ 
+ 
+ ksu@KSU-Ubuntu-1604-32:~$    gcc -S -masm=intel 1.c -o func1_intel.s
+ksu@KSU-Ubuntu-1604-32:~$ cat func1_intel.s 
+	.file	"1.c"
+	.intel_syntax noprefix
+	.section	.rodata
+.LC0:
+	.string	"Hello CTFer"
+	.text
+	.globl	main
+	.type	main, @function
+main:
+.LFB0:
+	.cfi_startproc
+	lea	ecx, [esp+4]
+	.cfi_def_cfa 1, 0
+	and	esp, -16
+	push	DWORD PTR [ecx-4]
+	push	ebp
+	.cfi_escape 0x10,0x5,0x2,0x75,0
+	mov	ebp, esp
+	push	ecx
+	.cfi_escape 0xf,0x3,0x75,0x7c,0x6
+	sub	esp, 4
+	sub	esp, 12
+	push	OFFSET FLAT:.LC0
+	call	puts
+	add	esp, 16
+	mov	eax, 0
+	mov	ecx, DWORD PTR [ebp-4]
+	.cfi_def_cfa 1, 0
+	leave
+	.cfi_restore 5
+	lea	esp, [ecx-4]
+	.cfi_def_cfa 4, 4
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	main, .-main
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609"
+	.section	.note.GNU-stack,"",@progbits
+
+```
+
+
+
+## gcc -S -masm=intel func1.c -o func1_intel.s -fno-asynchronous-unwind-tables
+```
+
+ksu@KSU-Ubuntu-1604-32:~$ gcc -S -masm=intel 1.c -o func1_intel.s -fno-asynchronous-unwind-tables
+ksu@KSU-Ubuntu-1604-32:~$ cat func1_intel.s 
+	.file	"1.c"
+	.intel_syntax noprefix
+	.section	.rodata
+.LC0:
+	.string	"Hello CTFer"
+	.text
+	.globl	main
+	.type	main, @function
+main:
+	lea	ecx, [esp+4]
+	and	esp, -16
+	push	DWORD PTR [ecx-4]
+	push	ebp
+	mov	ebp, esp
+	push	ecx
+	sub	esp, 4
+	sub	esp, 12
+	push	OFFSET FLAT:.LC0
+	call	puts
+	add	esp, 16
+	mov	eax, 0
+	mov	ecx, DWORD PTR [ebp-4]
+	leave
+	lea	esp, [ecx-4]
+	ret
+	.size	main, .-main
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609"
+	.section	.note.GNU-stack,"",@progbits
 
 ```
